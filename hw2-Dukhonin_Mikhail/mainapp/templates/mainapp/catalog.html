@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Каталог | {{ block.super }}{% endblock %}
+{% block main %}
+<h1>Каталог библиотеки</h1>
+<div>в базе {{ book_list|length }} книг.</div>
+<div>
+    <ul>
+        {% for book in book_list %}
+        {% if book.tags|lower == 'инф. python' %}
+            <li>
+                {% if book.author != None %}
+                {{ book.author }} 
+                {% endif %}
+                {{ book.title }}</li>
+        {% endif %}
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
