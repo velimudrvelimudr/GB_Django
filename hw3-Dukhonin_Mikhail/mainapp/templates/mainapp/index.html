@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Главная | {{ block.super }}{% endblock %}
+{% block main %}
+<h1>Электронная библиотека</h1>
+<div>Библиотека книг о Python</div>
+
+<div>Категории книг</div>
+<ul>
+{% for category in bc %}
+<li>{{ category.name }}</li>
+{% endfor %}
+</ul>
+{% endblock %}
