@@ -22,5 +22,5 @@ urlpatterns = [
     path('', ma.main, name="main"),
     path('catalog/', ma.catalog, name="catalog"),
     path('contacts/', ma.contacts, name="contacts"),
-    path('test/', ma.test),
+    path('test/', ma.test, name='test'"),
 ]
