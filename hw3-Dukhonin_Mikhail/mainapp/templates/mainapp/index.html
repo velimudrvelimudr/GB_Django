@@ -8,7 +8,7 @@
 <div>Категории книг</div>
 <ul>
 {% for category in bc %}
-<li>{{ category.name }}</li>
+<li><a href="{% url 'catalog' category.id %}">{{ category.name }}</a></li>
 {% endfor %}
 </ul>
 {% endblock %}

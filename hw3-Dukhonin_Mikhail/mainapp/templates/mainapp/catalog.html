@@ -3,16 +3,32 @@
 {% block title %}Каталог | {{ block.super }}{% endblock %}
 {% block main %}
 <h1>Каталог библиотеки</h1>
-<div>в базе {{ books|length }} книг.</div>
+<div>отображается {{ books|length }} книг.</div>
+<h2>Категории:</h2>
+<ul>
+    {% for id, name in cat_menu %}
+<li>
+    <a href="{% url 'catalog' id %}">{{ name }}</a>
+</li>
+    {% endfor %}
+</ul>
+{% if topic_name %}
+<div>Раздел: {{ topic_name }}.</div>
+{% endif %}
 <div>
     <ul>
         {% for book in books %}
             <li>
-                {{ book.categor.name }}
-                {% if book.author != None %}
+                {% if not topic_name %}
+                {{ book.cat_fk.name }}
+                {% endif %}
+                {% if book.author %}
                 {{ book.author }} 
                 {% endif %}
-                {{ book.name }}</li>
+                <a href="{% url 'book' book_id=book.id %}">
+                {{ book.name }}
+                </a>
+            </li>
         {% endfor %}
     </ul>
 </div>
