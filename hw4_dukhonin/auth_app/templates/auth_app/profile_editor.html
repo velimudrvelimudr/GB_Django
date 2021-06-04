@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+{{ title }} {{ user.username }} - {{ block.super }}
+{% endblock %}
+
+{% block main %}
+<h1>{{ title }} {{ user.username }}</h1>
+
+<form action="{% url 'auth:profile' 'edit' %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ edit_form.as_p }}
+    <input type="submit" value="Сохранить">
+</form>
+{% endblock %}
