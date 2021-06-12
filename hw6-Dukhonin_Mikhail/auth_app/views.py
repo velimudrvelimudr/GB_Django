@@ -1,6 +1,7 @@
 from django.shortcuts import render, HttpResponseRedirect
 from auth_app.forms import BookLoginUserForm, BookUserEditForm, BookUserRegisterForm
 from django.contrib import auth
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from userlibrapp.models import PersonLib
 
@@ -9,13 +10,9 @@ from userlibrapp.models import PersonLib
 def login(request):
     """ Страница авторизации.  """
 
-    if request.user.is_authenticated:
-        user_books = PersonLib.objects.filter(user=request.user)
-    else:
-        user_books = None
-
     title = 'Вход'
     login_form = BookLoginUserForm(data=request.POST)
+
     if request.method == 'POST' and login_form.is_valid():
         username = request.POST['username']
         password = request.POST['password']
@@ -27,23 +24,23 @@ def login(request):
     content = {
         'title': title,
         'login_form':login_form,
-        'user_books':user_books
+        'user_books':None
     }
 
     return render(request, 'auth_app/login.html', context=content)
 
 
+@login_required
 def logout(request):
     auth.logout(request)
-    return HttpResponseRedirect(reverse('main'))
+    return HttpResponseRedirect(reverse('auth:login'))
 
 
+@login_required
 def profile(request):
     """ Просмотр профиля аутентифицированного пользователя. """
 
-    if request.user.is_authenticated:
-        user_books = PersonLib.objects.filter(user=request.user)
-    
+    user_books = PersonLib.objects.filter(user=request.user)
     title = 'Профиль пользователя'
 
     context = {
@@ -51,20 +48,14 @@ def profile(request):
         'user_books':user_books,
     }
 
-    if request.user.is_authenticated:
-        return render(request, 'auth_app/profile_view.html', context=context)
-    else:
-        return HttpResponseRedirect(reverse('auth:login')) # Нечего анониму делать на странице профиля.
+    return render(request, 'auth_app/profile_view.html', context=context)
 
+
+@login_required
 def edit(request):
     """ Редактирование профиля пользователя.  """
 
-    if request.user.is_anonymous:
-        return HttpResponseRedirect(reverse('auth:login')) # Анонимного пользователя попросим залогиниться.
-
-    if request.user.is_authenticated:
-        user_books = PersonLib.objects.filter(user=request.user)
-
+    user_books = PersonLib.objects.filter(user=request.user)
     title = 'Изменить профиль пользователя'
 
     if request.method == 'POST':

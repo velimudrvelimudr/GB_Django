@@ -76,6 +76,7 @@ def show_book_info(request, book_id):
         'user_books':user_books,
         'book_count':book_count,
         'url_data':(url_view, url_id, url_text),
+        'bi':Books.objects.get(id=book_id).book_info
     }
     print(context['url_data'])
     return render(request, 'mainapp/book.html', context=context)

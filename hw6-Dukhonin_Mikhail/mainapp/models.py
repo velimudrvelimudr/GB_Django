@@ -22,3 +22,16 @@ class Books(models.Model):
 
     def __str__(self):
         return f'{self.name}, {self.author}\n{self.annotation}\n{self.cat_fk.name}'
+
+    @property
+    def book_info(self):
+        """ Собирает всю информацию о книге и выводит её в виде текстовой строки.  """
+
+        return f"""Полная информация о книге.\n \
+            Название: {self.name};\n \
+            Автор: {self.author if self.author else 'отсутствует;'};\n \
+            Аннотация: {self.annotation if self.annotation else 'отсутствует'};\n \
+            Добавлена в библиотеку: {self.created_at};\n \
+            Обновлена: {self.updated_at}; \
+            Входит в категорию: {self.cat_fk.name}."""
+
