@@ -11,11 +11,13 @@ def perslib(request):
     """ Просмотр библиотеки пользователя. """
 
     title = 'Библиотека пользователя'
-    user_books = PersonLib.objects.filter(user=request.user)
+    user_books = request.user.perslib.all().order_by('add_datetime')
+    user_count = request.user.user_count
 
     context = {
         'title':title,
         'user_books':user_books,
+        'user_count': user_count,
     }
 
     return render(request, 'userlibrapp/userlibr.html', context=context)
@@ -27,7 +29,7 @@ def add_book(request, pk):
 
     book = get_object_or_404(Books, pk=pk)
 
-    user_book = PersonLib.objects.filter(user=request.user, book=book).first()
+    user_book = request.user.perslib.filter(book=book).first()
 
     if not user_book:
         user_book = PersonLib(user=request.user, book=book)

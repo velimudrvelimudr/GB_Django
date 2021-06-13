@@ -23,6 +23,15 @@ class Books(models.Model):
     def __str__(self):
         return f'{self.name}, {self.author}\n{self.annotation}\n{self.cat_fk.name}'
 
+
+    @property
+    def book_count(self):
+        """ Определяет, сколько пользователей добавили книгу в свою библиотеку.  """
+
+        return len(self.booklib.all())
+
+
+# Пока продрался через все дебри методов, вот создал первый рабочий пример. Сам по себе он ни в звезду, ни в красную армию, ибо дублирует __str__, но раз уж сделал, пусть пока остаётся.
     @property
     def book_info(self):
         """ Собирает всю информацию о книге и выводит её в виде текстовой строки.  """
