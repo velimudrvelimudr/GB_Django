@@ -1,0 +1,12 @@
+{% extends './base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} | {{ block.super }}{% endblock %}
+
+{% block main %}
+<h1>{{ title }}</h1>
+<div>
+    <p><strong>Наименование: </strong>{{ cat.name }}</p>
+    <p><strong>Описание: </strong>{{ cat.description|default:'Отсутствует' }}</p>
+</div>
+{% endblock %}

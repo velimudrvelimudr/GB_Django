@@ -1,4 +1,3 @@
-import auth_app
 from django.urls import path
 import auth_app.views as     authapp
 

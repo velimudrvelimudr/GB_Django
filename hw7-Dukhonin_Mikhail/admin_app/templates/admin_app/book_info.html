@@ -1,0 +1,15 @@
+{% extends './base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} | {{ block.super }}{% endblock %}
+
+{% block main %}
+<h1>{{ title }}</h1>
+<div>
+    {% if book.author %}<p><strong>Автор: </strong>{{ book.author }}</p>{% endif %}
+    <p><strong>Название: </strong>{{ book.name }}</p>
+    <h2>Аннотация</h2>
+    <p>{{ book.annotation|default:'Отсутствует' }}</p>
+    <p>Находится в библиотеке у {{ book.book_count }} пользователей</p>
+</div>
+{% endblock %}

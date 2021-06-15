@@ -6,7 +6,7 @@
     <ul>
         {% if user.is_authenticated %}
         {% if user.is_superuser %}
-        <li><a href="/admin/">Административный сайт</a></li>
+        <li><a href="{% url 'admin:users' %}">Административный сайт</a></li>
         {% endif %}
         <li><a href="{% url 'auth:profile' %}">{{ user.first_name|default:user.username }}</a></li>
         <li><a href="{% url 'libr:perslib' %}">Библиотека ({{ user_count }})</a></li>

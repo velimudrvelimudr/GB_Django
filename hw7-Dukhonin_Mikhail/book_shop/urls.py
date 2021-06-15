@@ -22,13 +22,14 @@ from mainapp.views import main, catalog, show_book_info, contacts, test
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('', main, name='main'),
     path('catalog/', include('mainapp.urls')),
-    path('auth/', include('auth_app.urls', namespace='auth')),
-    path('libr/', include('userlibrapp.urls', namespace='libr')),
     path('contacts/', contacts, name='contacts'),
     path('test/', test, name='test'),
+    path('auth/', include('auth_app.urls', namespace='auth')),
+    path('libr/', include('userlibrapp.urls', namespace='libr')),
+    path('myadmin/', include('admin_app.urls', namespace='admin')),
+    path('admin/', admin.site.urls),
 ]
 
 if settings.DEBUG:

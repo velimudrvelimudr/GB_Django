@@ -1,0 +1,14 @@
+{% extends './base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} | {{ block.super }}{% endblock %}
+
+{% block main %}
+<h1>{{ title }}</h1>
+
+<ul>
+    {% for u in users %}
+    <li><a href="{% url 'admin:user_info' u.id %}">{{ u.username }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}
