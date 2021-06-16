@@ -16,4 +16,7 @@
     <p><strong>Суперпользователь: </strong>{{ user.is_superuser }}</p>
     <p><strong>Последний вход: </strong>{{ user.last_login }}</p>
 </div>
+<div><a href="{% url 'admin:change_user' user.pk %}">Изменить</a></div>
+<div>   <a href="{% url 'admin:user_delete' user.pk %}">Удалить</a></div>
+
 {% endblock %}
