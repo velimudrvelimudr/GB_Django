@@ -1,7 +1,9 @@
 from django.shortcuts import render
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from csv import DictReader
 from mainapp.models import BookCategory, Books
 from userlibrapp.models import PersonLib
+
 
 # Create your views here.
 
@@ -21,7 +23,7 @@ def main(request):
     return render(request, 'mainapp/index.html', context=content)
 
 
-def catalog(request, pk=None):
+def catalog(request, pk=None, num_page=1):
     """ Отображение каталога. Если указан ID категории, то только книг из этой категории. """
 
     if request.user.is_authenticated:
@@ -31,16 +33,24 @@ def catalog(request, pk=None):
 
     if pk:
         book_list = Books.objects.all().filter(cat_fk=pk)
-        topic = BookCategory.objects.get(pk=pk).name
+        topic = BookCategory.objects.get(pk=pk)
     else:
         book_list = Books.objects.all()
         topic = None
 
     cat_menu = BookCategory.objects.all().order_by('name')
-    
+
+    paginator = Paginator(book_list, 10)
+    try:
+        books_paginator = paginator.page(num_page)
+    except PageNotAnInteger:
+        books_paginator = paginator.page(1)
+    except EmptyPage:
+        books_paginator = paginator.page(paginator.num_pages)
+
     content = {
-        'books':book_list,
-        'topic_name': topic,
+        'books':books_paginator,
+        'topic': topic,
         'cat_menu':cat_menu,
         'user_count': user_count,
     }
