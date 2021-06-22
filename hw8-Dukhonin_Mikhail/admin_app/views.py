@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import user_passes_test
 from auth_app.models import BookUser
 from auth_app.forms import BookUserRegisterForm
 from mainapp.models import BookCategory, Books
-from admin_app.forms import BookUserAdminEditForm, CatEditForm
+from admin_app.forms import BookUserAdminEditForm, CatEditForm, BookEditForm
 
 
 # Create your views here.
@@ -236,4 +236,70 @@ def book_info(request, pk):
     }
 
     return render(request, 'admin_app/book_info.html', context=context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def add_book(request):
+    """ Добавление книги в библиотеку.  """
+
+    title = 'Добавление книги'
+
+    if request.method == 'POST':
+        edit_form = BookEditForm(request.POST, request.FILES)
+        if edit_form.is_valid:
+            nb = edit_form.save()
+            return HttpResponseRedirect(reverse('admin:book_info', args=[nb.pk]))
+    else:
+        edit_form = BookEditForm()
+
+    context = {
+        'title': title,
+        'edit_form': edit_form,
+    }
+
+    return render(request, 'admin_app/change_obj.html', context=context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def change_book(request, pk):
+    """ Редактирование данных о книге. """
+
+    title = 'Отредактировать данные книги'
+    book = get_object_or_404(Books, pk=pk)
+
+    if request.method == 'POST':
+        edit_form = BookEditForm(request.POST, request.FILES, instance=book)
+        if edit_form.is_valid:
+            edit_form.save()
+            return HttpResponseRedirect(reverse('admin:book_info', args=[pk]))
+    else:
+        edit_form = BookEditForm(instance=book)
+
+    context = {
+        'title': title,
+        'edit_form': edit_form,
+    }
+
+    return render(request, 'admin_app/change_obj.html', context=context)
+
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def del_book(request, pk):
+    """ Удаление книги. """
+
+    title = 'Удалить книгу'
+    book_to_delete = get_object_or_404(Books, pk=pk)
+
+    if request.method == 'POST':
+        book_to_delete.delete()
+        return HttpResponseRedirect(reverse('admin:books', args=[book_to_delete.cat_fk.pk]))
+    else:
+        context = {
+            'title': title,
+            'book_to_delete': book_to_delete,
+        }
+
+        return render(request, 'admin_app/delete_book.html', context=context)
+
 

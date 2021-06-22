@@ -7,6 +7,9 @@
 <h1>{{ title }}</h1>
 
 <ul>
+    <li><a href="{% url 'admin:add_book' %}">Добавить книгу в библиотеку</a></li>
+</ul>
+<ul>
     {% for cat in cat_menu %}
     <li><a href="{% url 'admin:books' cat.pk %}">{{ cat.name }}</a></li>
     {% endfor %}

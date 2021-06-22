@@ -17,5 +17,8 @@ urlpatterns = [
     path('cat_delete/<int:pk>/', my_admin.cat_delete, name='cat_delete'),
     path('books/', my_admin.books, name='books'),
     path('books/<int:cat>/', my_admin.books, name='books'),
-    path('book_info/<int:pk>/', my_admin.book_info, name='book_info')
+    path('book_info/<int:pk>/', my_admin.book_info, name='book_info'),
+    path('add_book/', my_admin.add_book, name='add_book'),
+    path('change_book/<int:pk>', my_admin.change_book, name='change_book'),
+    path('del_book/<int:pk>/', my_admin.del_book, name='del_book'),
 ]
