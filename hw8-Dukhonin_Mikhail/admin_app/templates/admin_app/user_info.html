@@ -1,5 +1,6 @@
 {% extends './base.html' %}
 {% load static %}
+{% load booktags %}
 
 {% block title %}{{ title }} | {{ block.super }}{% endblock %}
 
@@ -11,9 +12,9 @@
     <p><strong>Имя: </strong>{{ user.first_name|default:'Отсутствует' }}</p>
     <p><strong>Фамилия: </strong>{{ user.last_name|default:'Отсутствует' }}</p>
     <p><strong>Возраст: </strong>{{ user.age }}</p>
-    <p><strong>Активен: </strong>{{ user.is_active }}</p>
-    <p><strong>Администрация: </strong>{{ user.is_staff }}</p>
-    <p><strong>Суперпользователь: </strong>{{ user.is_superuser }}</p>
+    <p><strong>Активен: </strong>{{ user.is_active|hum_bool }}</p>
+    <p><strong>Администрация: </strong>{{ user.is_staff|hum_bool }}</p>
+    <p><strong>Суперпользователь: </strong>{{ user.is_superuser|hum_bool }}</p>
     <p><strong>Последний вход: </strong>{{ user.last_login }}</p>
 </div>
 <div><a href="{% url 'admin:change_user' user.pk %}">Изменить</a></div>
