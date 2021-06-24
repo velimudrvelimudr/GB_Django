@@ -15,7 +15,7 @@
     {% endfor %}
 </ul>
 <ul>
-    {% for book in books %}
+    {% for book in object_list %}
     <li>{% if book.author %}{{ book.author }} {% endif %}
     <a href="{% url 'admin:book_info' book.pk %}">{{ book.name }}</a> 
     {{ book.cat_fk.name }}</li>

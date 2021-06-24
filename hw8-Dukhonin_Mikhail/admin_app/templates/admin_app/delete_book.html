@@ -1,17 +1,17 @@
 {% extends './base.html' %}
 {% load static %}
 
-{% block title %}{{ title }} {{ book_to_delete.name }} | {{ block.super }}{% endblock %}
+{% block title %}{{ title }} {{ object.name }} | {{ block.super }}{% endblock %}
 
 {% block main %}
-<h1>{{ title }} {{ book_to_delete.name }}</h1>
+<h1>{{ title }} {{ object.name }}</h1>
 
-<form action="{% url 'admin:del_book' book_to_delete.pk %}" method="POST">
+<form action="{% url 'admin:del_book' object.pk %}" method="POST">
     {% csrf_token %}
     <input type="submit" value="Удалить">
 </form>
 
 <button type="button">
-    <a href="{% url 'admin:book_info' book_to_delete.pk %}">Отмена</a>
+    <a href="{% url 'admin:book_info' object.pk %}">Отмена</a>
 </button>
 {% endblock %}
