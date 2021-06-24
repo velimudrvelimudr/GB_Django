@@ -397,6 +397,5 @@ class BookDelete(DeleteView):
 
     def delete(self, request, *args, **kwargs):
         self.del_book = self.get_object()
-        self.del_book.annotation = 'Типа удалённая книга...'
-        self.del_book.save()
+        self.del_book.delete()
         return HttpResponseRedirect(self.get_success_url())

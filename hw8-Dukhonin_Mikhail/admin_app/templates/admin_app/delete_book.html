@@ -6,7 +6,7 @@
 {% block main %}
 <h1>{{ title }} {{ object.name }}</h1>
 
-<form action="{% url 'admin:del_book' object.pk %}" method="POST">
+<form method="POST">
     {% csrf_token %}
     <input type="submit" value="Удалить">
 </form>
