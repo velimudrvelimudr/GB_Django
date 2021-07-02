@@ -1,9 +1,13 @@
-from django.shortcuts import render, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render, HttpResponseRedirect
 from auth_app.forms import BookLoginUserForm, BookUserEditForm, BookUserRegisterForm
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from userlibrapp.models import PersonLib
+from django.core.mail import send_mail
+from django.conf import settings
+from auth_app.models import BookUser
+
 
 # Create your views here.
 
@@ -76,6 +80,16 @@ def edit(request):
     return render(request, 'auth_app/profile_editor.html', context=context)
 
 
+def send_verify_mail(user):
+    """ Отправляет регистрирующемуся  пользователю E-Mail с кодом подтверждения регистрации.  """
+
+    verify_link = reverse('auth:verify', args=[user.email, user.activation_key])
+    title = f'Подтверждение учётной записи пользователя {user.username}.'
+    message = f'Для подтверждения учётной записи {user.username} на портале {settings.DOMAIN_NAME} перейдите по ссылке\n{settings.DOMAIN_NAME}{verify_link}'
+
+    return send_mail(title, message, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
+
+
 def register(request):
     """ Регистрация нового пользователя """
 
@@ -87,18 +101,42 @@ def register(request):
     if request.method == 'POST':
         reg_form = BookUserRegisterForm(request.POST, request.FILES)
         if reg_form.is_valid():
-            reg_form.save()
-            return HttpResponseRedirect(reverse('auth:login'))
+            new_user = reg_form.save()
+            if send_verify_mail(new_user):
+                auth.login(request, new_user)
+                return HttpResponseRedirect(reverse('auth:login'))
+            else:
+                print('Ошибка отправки сообщения!')
+                return HttpResponseRedirect(reverse('auth:login'))
     else:
         reg_form = BookUserRegisterForm
 
     context = {
         'title':title,
         'form':reg_form,
-        'id_view':'registr',
+        'id_view':'registr', # Чтобы отличить форму для регистрации от формы для редактирования пользователя.
         'user_count': None,
     }
 
     return render(request, 'auth_app/profile_editor.html', context)
 
+
+def verify(request, email, activation_key):
+    """ Верификация пользователя. """
+
+    try:
+        user = get_object_or_404(BookUser, email=email)
+
+        if user.activation_key == activation_key and user.is_key_expired():
+            user.is_active = True
+            user.activation_key = ''
+            user.save()
+            auth.login(request, user)
+            return render(request, 'auth_app/verification.html')
+        else:
+            print(f'Ошибка верификации пользователя {user}')
+            return render(request, 'auth_app/verification.html')
+    except Exception as e:
+        print(f'Ошибка активации пользователя {user.username}: {e.args}')
+        return HttpResponseRedirect(reverse('main'))
 

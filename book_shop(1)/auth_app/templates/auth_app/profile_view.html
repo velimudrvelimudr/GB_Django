@@ -15,4 +15,7 @@
     <li><img src="{{ user.avatar }}" alt="Аватарка"></li>
 </ul>
 <p><a href="{% url 'auth:edit' %}">Изменить.</a></p>
+{% if not user.is_active %}
+<p>Вы не активировали свой аккаунт. <a href="{% url 'auth:verify' user.email user.activation_key %}">Отправить активационное письмо?</a></p>
+{% endif %}
 {% endblock %}

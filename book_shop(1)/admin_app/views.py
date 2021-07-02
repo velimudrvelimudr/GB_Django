@@ -1,4 +1,3 @@
-from django.http import request
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.decorators import user_passes_test
@@ -85,7 +84,7 @@ def user_change(request, pk):
 
     context = {
         'title': title,
-        'edit_form': change_form,
+        'form': change_form,
     }
 
     return render(request, 'admin_app/change_obj.html', context=context)
