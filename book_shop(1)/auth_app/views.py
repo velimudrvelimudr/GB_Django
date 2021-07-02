@@ -28,7 +28,6 @@ def login(request):
     content = {
         'title': title,
         'login_form':login_form,
-        'user_count':None
     }
 
     return render(request, 'auth_app/login.html', context=content)
@@ -44,12 +43,10 @@ def logout(request):
 def profile(request):
     """ Просмотр профиля аутентифицированного пользователя. """
 
-    user_count = request.user.user_count
     title = 'Профиль пользователя'
 
     context = {
         'title':title,
-        'user_count': user_count,
     }
 
     return render(request, 'auth_app/profile_view.html', context=context)
@@ -59,7 +56,6 @@ def profile(request):
 def edit(request):
     """ Редактирование профиля пользователя.  """
 
-    user_count = request.user.user_count
     title = 'Изменить профиль пользователя'
 
     if request.method == 'POST':
@@ -74,7 +70,6 @@ def edit(request):
         'title':title,
         'form': edit_form,
         'id_view':'edit',
-        'user_count': user_count,
     }
 
     return render(request, 'auth_app/profile_editor.html', context=context)
