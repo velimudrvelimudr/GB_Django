@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+Верификация пользователя {% if user %}{{ user.username }}{% endif %}
+{% endblock %}
+
+{% block main %}
+{% if not user.is_anonymous %}
+<h1>Поздравляем!</h1>
+<p>Пользователь {{ user.username }} подтверждён.</p>
+<p><a href="{% url 'auth:profile' %}">Перейти в профиль</a></p>
+{% else %}
+<h1>Сожалеем.</h1>
+<p>Подтверждение пользователя не произошло.</p>
+<p><a href="{% url 'main' %}">На главную</a></p>
+{% endif %}
+{% endblock %}
