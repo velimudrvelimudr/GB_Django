@@ -1,10 +1,15 @@
+from django.http import request
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.contrib.auth.decorators import user_passes_test
+from django.views.generic import ListView, DetailView, UpdateView, CreateView
+from django.utils.decorators import method_decorator
+from django.views.generic.base import TemplateResponseMixin
+from django.views.generic.edit import DeleteView
 from auth_app.models import BookUser
 from auth_app.forms import BookUserRegisterForm
 from mainapp.models import BookCategory, Books
-from admin_app.forms import BookUserAdminEditForm, CatEditForm
+from admin_app.forms import BookUserAdminEditForm, CatEditForm, BookEditForm
 
 
 # Create your views here.
@@ -223,6 +228,37 @@ def books(request, cat=None):
     return render(request, 'admin_app/books.html', context=context)
 
 
+class BooksLV(ListView):
+    model = Books
+    template_name = 'admin_app/books.html'
+
+
+    @method_decorator(user_passes_test(lambda u: u.is_superuser))
+    def  dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+
+    def get_queryset(self):
+
+        if self.kwargs.get('cat'):
+            return super().get_queryset().filter(cat_fk=self.kwargs['cat']).order_by('name')
+
+        return super().get_queryset().order_by('name')
+
+
+    def  get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Список книг'
+        context['cat_menu'] = BookCategory.objects.all().order_by('name')
+
+        if self.kwargs.get('cat'):
+            context['cat_name'] = get_object_or_404(BookCategory, pk=self.kwargs['cat']).name
+        else:
+            context['cat_name'] = None
+
+        return context
+
+
 @user_passes_test(lambda u: u.is_superuser)
 def book_info(request, pk):
     """ Информация о книге. """
@@ -237,3 +273,129 @@ def book_info(request, pk):
 
     return render(request, 'admin_app/book_info.html', context=context)
 
+
+class BookDetail(DetailView):
+    model = Books
+    template_name = 'admin_app/book_info.html'
+    context_object_name = 'book'
+
+
+    @method_decorator(user_passes_test(lambda u: u.is_superuser))
+    def  dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def  get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Информация о книге'
+
+        return context
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def add_book(request):
+    """ Добавление книги в библиотеку.  """
+
+    title = 'Добавление книги'
+
+    if request.method == 'POST':
+        edit_form = BookEditForm(request.POST, request.FILES)
+        if edit_form.is_valid:
+            nb = edit_form.save()
+            return HttpResponseRedirect(reverse('admin:book_info', args=[nb.pk]))
+    else:
+        edit_form = BookEditForm()
+
+    context = {
+        'title': title,
+        'edit_form': edit_form,
+    }
+
+    return render(request, 'admin_app/change_obj.html', context=context)
+
+
+class BookAdd(CreateView):
+    model = Books
+    template_name = 'admin_app/change_obj.html'
+    fields = '__all__'
+    extra_context = {'title': 'Добавить книгу'}
+
+    @method_decorator(user_passes_test(lambda u: u.is_superuser))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse_lazy('admin:book_info', args=[self.object.pk])
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def change_book(request, pk):
+    """ Редактирование данных о книге. """
+
+    title = 'Отредактировать данные книги'
+    book = get_object_or_404(Books, pk=pk)
+
+    if request.method == 'POST':
+        edit_form = BookEditForm(request.POST, request.FILES, instance=book)
+        if edit_form.is_valid:
+            edit_form.save()
+            return HttpResponseRedirect(reverse('admin:book_info', args=[pk]))
+    else:
+        edit_form = BookEditForm(instance=book)
+
+    context = {
+        'title': title,
+        'edit_form': edit_form,
+    }
+
+    return render(request, 'admin_app/change_obj.html', context=context)
+
+
+class BookChange(UpdateView):
+    model = Books
+    template_name = 'admin_app/change_obj.html'
+    fields = '__all__'
+    extra_context = {'title': 'Изменить данные книги'}
+
+
+    @method_decorator(user_passes_test(lambda u: u.is_superuser))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse_lazy('admin:book_info', args=[self.get_object().pk])
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def del_book(request, pk):
+    """ Удаление книги. """
+
+    title = 'Удалить книгу'
+    book_to_delete = get_object_or_404(Books, pk=pk)
+
+    if request.method == 'POST':
+        book_to_delete.delete()
+        return HttpResponseRedirect(reverse('admin:books', args=[book_to_delete.cat_fk.pk]))
+    else:
+        context = {
+            'title': title,
+            'object': book_to_delete,
+        }
+
+        return render(request, 'admin_app/delete_book.html', context=context)
+
+
+class BookDelete(DeleteView):
+    model = Books
+    template_name = 'admin_app/delete_book.html'
+    success_url = reverse_lazy('admin:books')
+    extra_context = {'title': 'Удалить книгу'}
+
+
+    @method_decorator(user_passes_test(lambda u: u.is_superuser))
+    def  dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        self.del_book = self.get_object()
+        self.del_book.delete()
+        return HttpResponseRedirect(self.get_success_url())

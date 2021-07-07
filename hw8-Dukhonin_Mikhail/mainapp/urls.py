@@ -23,6 +23,8 @@ from mainapp.views import catalog, show_book_info
 urlpatterns = [
     path('', catalog, name='catalog'),
     path('<int:pk>/', catalog, name='catalog'),
+    path('page/<int:num_page>/', catalog, name='page'),
+    path('<int:pk>/page/<int:num_page>/', catalog, name='page'),
     path('book/<int:book_id>/', show_book_info, name='book'),
 ]
 
