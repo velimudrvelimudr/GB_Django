@@ -9,7 +9,7 @@
 <div>Библиотека книг о Python</div>
 
 {% if user.is_authenticated %}
-<div>В библиотеке пользователя {{ user.first_name|default:user.username }} {{ user_books|length }} книг.</div>
+<div>В библиотеке пользователя {{ user.first_name|default:user.username }} {{ user.user_count }} книг.</div>
 {% endif %}
 
 <div>Категории книг</div>
