@@ -1,15 +1,16 @@
 from django.shortcuts import get_object_or_404, render, HttpResponseRedirect
-from auth_app.forms import BookLoginUserForm, BookUserEditForm, BookUserRegisterForm
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-from userlibrapp.models import PersonLib
 from django.core.mail import send_mail
 from django.conf import settings
 from auth_app.models import BookUser
+from auth_app.forms import BookLoginUserForm, BookUserEditForm, BookUserRegisterForm
+from userlibrapp.models import PersonLib
 
 
 # Create your views here.
+
 
 def login(request):
     """ Страница авторизации.  """

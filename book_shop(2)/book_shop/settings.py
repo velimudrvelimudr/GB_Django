@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'auth_app',
     'userlibrapp',
     'admin_app',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -147,6 +148,21 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'auth_app.BookUser'
 LOGIN_URL = '/auth/login/'
 
+# Настройка авторизации через социальные сети.
+
+AUTHENTICATION_BACKENDS = [
+    # 'social_core.backends.linkedin.LinkedinOAuth2',
+    # 'social_core.backends.instagram.InstagramOAuth2',
+    'social_core.backends.facebook.FacebookOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+
+# Данные для регистрации через FaceBook.
+SOCIAL_AUTH_FACEBOOK_KEY = '2977473779157633'
+SOCIAL_AUTH_FACEBOOK_SECRET = ''
+
+
 # Добавляем данные для отправки E-Mail
 
 DOMAIN_NAME = 'http://localhost:8000'
@@ -171,3 +187,4 @@ EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
  """
+
