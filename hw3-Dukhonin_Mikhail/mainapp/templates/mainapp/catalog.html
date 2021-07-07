@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Каталог | {{ block.super }}{% endblock %}
+{% block main %}
+<h1>Каталог библиотеки</h1>
+<div>отображается {{ books|length }} книг.</div>
+<h2>Категории:</h2>
+<ul>
+    {% for id, name in cat_menu %}
+<li>
+    <a href="{% url 'catalog' id %}">{{ name }}</a>
+</li>
+    {% endfor %}
+</ul>
+{% if topic_name %}
+<div>Раздел: {{ topic_name }}.</div>
+{% endif %}
+<div>
+    <ul>
+        {% for book in books %}
+            <li>
+                {% if not topic_name %}
+                {{ book.cat_fk.name }}
+                {% endif %}
+                {% if book.author %}
+                {{ book.author }} 
+                {% endif %}
+                <a href="{% url 'book' book_id=book.id %}">
+                {{ book.name }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
