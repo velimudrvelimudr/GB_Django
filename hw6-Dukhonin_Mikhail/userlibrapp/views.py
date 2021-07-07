@@ -1,35 +1,35 @@
 from django.shortcuts import render, HttpResponseRedirect, get_object_or_404
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 from mainapp.models import Books
 from userlibrapp.models import PersonLib
 
 # Create your views here.
 
+@login_required
 def perslib(request):
     """ Просмотр библиотеки пользователя. """
 
-    if request.user.is_anonymous:
-        return HttpResponseRedirect(reverse('main')) # У анонима библиотеки не бывает.
-
-    user_books = PersonLib.objects.filter(user=request.user)
     title = 'Библиотека пользователя'
-    lib_data = PersonLib.objects.filter(user=request.user)
+    user_books = request.user.perslib.all().order_by('add_datetime')
+    user_count = request.user.user_count
 
     context = {
         'title':title,
         'user_books':user_books,
-        'lib_data':lib_data,
+        'user_count': user_count,
     }
 
     return render(request, 'userlibrapp/userlibr.html', context=context)
 
 
+@login_required
 def add_book(request, pk):
     """ Добавление книги в библиотеку. """
 
     book = get_object_or_404(Books, pk=pk)
 
-    user_book = PersonLib.objects.filter(user=request.user, book=book).first()
+    user_book = request.user.perslib.filter(book=book).first()
 
     if not user_book:
         user_book = PersonLib(user=request.user, book=book)
@@ -38,6 +38,8 @@ def add_book(request, pk):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
+
+@login_required
 def rm_book(request, pk):
     """ Удаление книги из библиотеки.  """
 
