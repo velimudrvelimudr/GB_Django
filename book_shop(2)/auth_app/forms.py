@@ -1,8 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserChangeForm, UserCreationForm
+from django.db import models
 from django.db.models import fields
-from .models import BookUser
-from auth_app import models
+from django.db.models.base import Model
+from auth_app.models import BookUser, BookUserProfile
 from random import random
 from hashlib import sha1
 
@@ -55,3 +56,8 @@ class BookUserRegisterForm(UserCreationForm):
 
         return user
 
+
+class EditProfileForm(forms.ModelForm):
+    class Meta:
+        model = BookUserProfile
+        fields = ('tagline', 'gender', 'about_me')

@@ -4,9 +4,10 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.core.mail import send_mail
 from django.conf import settings
-from auth_app.models import BookUser
-from auth_app.forms import BookLoginUserForm, BookUserEditForm, BookUserRegisterForm
+from auth_app.models import BookUser, BookUserProfile
+from auth_app.forms import BookLoginUserForm, BookUserEditForm, BookUserRegisterForm, EditProfileForm
 from userlibrapp.models import PersonLib
+from django.db import transaction
 
 
 # Create your views here.
@@ -54,6 +55,7 @@ def profile(request):
 
 
 @login_required
+@transaction.atomic
 def edit(request):
     """ Редактирование профиля пользователя.  """
 
@@ -61,16 +63,19 @@ def edit(request):
 
     if request.method == 'POST':
         edit_form = BookUserEditForm(request.POST, request.FILES, instance=request.user)
-        if edit_form.is_valid():
+        profile_form = EditProfileForm(request.POST, instance=request.user.bookuserprofile)
+        if edit_form.is_valid() and profile_form.is_valid():
             edit_form.save()
             return HttpResponseRedirect(reverse('auth:profile'))
     else:
         edit_form = BookUserEditForm(instance=request.user)
+        profile_form = EditProfileForm(instance=request.user.bookuserprofile)
 
     context = {
         'title':title,
         'form': edit_form,
         'id_view':'edit',
+        'pform': profile_form,
     }
 
     return render(request, 'auth_app/profile_editor.html', context=context)
@@ -135,4 +140,5 @@ def verify(request, email, activation_key):
     except Exception as e:
         print(f'Ошибка активации пользователя {user.username}: {e.args}')
         return HttpResponseRedirect(reverse('main'))
+
 

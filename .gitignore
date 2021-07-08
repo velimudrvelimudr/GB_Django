@@ -1,5 +1,4 @@
 __pycache__/
 __pycache__/*
 *.bat
-book_shop(1)/tmp/
-book_shop(1)/tmp/*
+*/tmp/*

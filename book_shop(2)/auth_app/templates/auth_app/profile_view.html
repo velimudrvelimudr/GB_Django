@@ -13,6 +13,9 @@
     <li><strong>Фамилия:</strong> {{ user.last_name|default:'Не задан' }}</li>
     <li><strong>Возраст:</strong> {{ user.age|default:'Не задан' }}</li>
     <li><img src="{{ user.avatar }}" alt="Аватарка"></li>
+    <li><strong>Теги: </strong>{{ user.bookuserprofile.tigline|default:'Не заданы' }}</li>
+    <li><strong>Пол: </strong>{{ user.bookuserprofile.gender|default:'Не указан' }}</li>
+    <li><strong>О себе:</strong> {{ user.bookuserprofile.about_me }}</li>
 </ul>
 <p><a href="{% url 'auth:edit' %}">Изменить.</a></p>
 {% if not user.is_active %}
