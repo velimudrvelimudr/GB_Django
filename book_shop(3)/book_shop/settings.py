@@ -14,7 +14,9 @@ from pathlib import Path
 import os
 from environ import Env
 
-Env.read_env('settings.env')
+env = Env()
+
+env.read_env('settings.env')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,11 +26,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-g3)+$=)nqn7t53l&)7l=3qwd3_5cevm6$c%z62t1uf!^db!$v('
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
+DEBUG = env('DEBUG')
 ALLOWED_HOSTS = []
 
 
@@ -162,9 +163,8 @@ AUTHENTICATION_BACKENDS = [
 
 
 # Данные для регистрации через FaceBook.
-SOCIAL_AUTH_FACEBOOK_KEY = '2977473779157633'
-SOCIAL_AUTH_FACEBOOK_SECRET = ''
-
+SOCIAL_AUTH_FACEBOOK_KEY = env('SOCIAL_AUTH_FACEBOOK_KEY')
+SOCIAL_AUTH_FACEBOOK_SECRET = env('SOCIAL_AUTH_FACEBOOK_SECRET')
 
 # Добавляем данные для отправки E-Mail
 
